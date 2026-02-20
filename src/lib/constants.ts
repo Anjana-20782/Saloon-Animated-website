@@ -53,4 +53,23 @@ export const PRODUCTS = [
   { id: 8, name: "Pure Essence", category: "Perfume", price: "$110", img: "https://images.unsplash.com/photo-1541643600914-78b084683601?auto=format&fit=crop&w=400&q=80" },
   { id: 9, name: "Nectar Balm", category: "Lip Care", price: "$22", img: "https://images.unsplash.com/photo-1599305090598-fe179d501227?auto=format&fit=crop&w=400&q=80" },
   { id: 10, name: "Earth Clay", category: "Exfoliator", price: "$38", img: "https://images.unsplash.com/photo-1556228720-195a672e8a03?auto=format&fit=crop&w=400&q=80" },
+  { id: 12, name: "Night Repair", category: "Face Cream", price: "$85", img: "https://images.unsplash.com/photo-1571781926291-c477ebfd024b?auto=format&fit=crop&w=400&q=80" },
+  { id: 13, name: "Bamboo Scrub", category: "Body Polish", price: "$48", img: "https://images.unsplash.com/photo-1601049541289-9b1b7bbbfe19?auto=format&fit=crop&w=400&q=80" },
+  { id: 16, name: "Floral Infusion", category: "Mist", price: "$25", img: "https://images.unsplash.com/photo-1611080626919-7cf5a9dbab5b?auto=format&fit=crop&w=400&q=80" },
+  { id: 17, name: "Cocoa Sheath", category: "Hand Cream", price: "$18", img: "https://images.unsplash.com/photo-1515377905703-c4788e51af15?auto=format&fit=crop&w=400&q=80" },
+  { id: 18, name: "Marine Therapy", category: "Salt Bath", price: "$40", img: "https://images.unsplash.com/photo-1505330622279-bf7d7fc918f4?auto=format&fit=crop&w=400&q=80" },
+
+  { id: 20, name: "Velvet Finish", category: "Styling Cream", price: "$34", img: "https://images.unsplash.com/photo-1492106087820-71f1a00d2b11?auto=format&fit=crop&w=400&q=80" },
 ];
+
+export const ABOUT_CONTENT = {
+  title: "The Art of Serenity",
+  subtitle: "Our Story",
+  description: "Founded in 2026, Serenity was born from a vision to blend high-end artistry with a sanctuary of peace. We believe that beauty is an internal journey reflected outward. Our artisans are dedicated to precision, sustainability, and the unique spirit of every individual who walks through our doors.",
+  philosophy: "To provide a transformative experience that honors both the aesthetic and the soul.",
+  stats: [
+    { label: "Years of Excellence", value: "15+" },
+    { label: "Master Artisans", value: "12" },
+    { label: "Luxury Rituals", value: "25" }
+  ]
+};
