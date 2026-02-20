@@ -10,63 +10,45 @@ gsap.registerPlugin(ScrollTrigger);
 
 export default function ScrollScene() {
     const containerRef = useRef<HTMLDivElement>(null);
-    // Using refs for direct GSAP access
     const textsRef = useRef<(HTMLDivElement | null)[]>([]);
 
     useLayoutEffect(() => {
-        // Only run on client
         if (typeof window === 'undefined') return;
 
         const ctx = gsap.context(() => {
             const totalRooms = ROOMS.length;
-
-            // Master timeline that scrubs through all changes
             const tl = gsap.timeline({
                 scrollTrigger: {
                     trigger: containerRef.current,
                     start: "top top",
-                    end: `+=${totalRooms * 100}%`, // Scroll distance: 100% of viewport height per room
-                    scrub: 1, // Smooth scrubbing
+                    end: `+=${totalRooms * 100}%`,
+                    scrub: 1,
                     pin: true,
                     anticipatePin: 1,
                 }
             });
 
             ROOMS.forEach((room, i) => {
-                // Skip the first room's setup as it is the initial state
                 if (i === 0) return;
-
-                // Position in the timeline
-                // 0 -> 1 is transition from Room 0 to Room 1
-                const position = i - 0.25; // Start slightly before the integer mark for overlap
-
-                // 1. Fade out previous text
                 tl.to(textsRef.current[i - 1], {
                     y: -50,
                     opacity: 0,
                     duration: 0.5,
                     ease: "power2.in"
-                }, i - 0.75); // Start exiting early
+                }, i - 0.75);
 
-                // 2. Fade in new background
-                // We select by ID for stable targeting or we could use another ref array
                 tl.fromTo(`#bg-${room.id}`,
-                    { opacity: 0, scale: 1.1 }, // Slight zoom effect
+                    { opacity: 0, scale: 1.1 },
                     { opacity: 1, scale: 1, duration: 1, ease: "power1.inOut" },
-                    i - 1 // Start exactly when previous room 'ends' in terms of scroll index
+                    i - 1
                 );
 
-                // 3. Fade in new text
                 tl.fromTo(textsRef.current[i],
                     { y: 50, opacity: 0 },
                     { y: 0, opacity: 1, duration: 0.5, ease: "power2.out" },
-                    i - 0.25 // Arrive towards the end of the transition
+                    i - 0.25
                 );
             });
-
-            // Ensure the last text fades out if needed, or stays.
-            // Usually we want the last scene to hold.
-
         }, containerRef);
 
         return () => ctx.revert();
@@ -74,14 +56,13 @@ export default function ScrollScene() {
 
     return (
         <div ref={containerRef} className="relative h-screen w-full overflow-hidden bg-black">
-            {/* Background Layer */}
             <div className="absolute inset-0 z-0">
                 {ROOMS.map((room, i) => (
                     <div
                         key={room.id}
                         id={`bg-${room.id}`}
                         className={`absolute inset-0 h-full w-full ${i === 0 ? 'opacity-100 z-10' : 'opacity-0 z-0'}`}
-                        style={{ zIndex: i }} // Ensure stacking order
+                        style={{ zIndex: i }}
                     >
                         <Image
                             src={room.imageUrl}
@@ -91,12 +72,12 @@ export default function ScrollScene() {
                             priority={i === 0}
                             quality={90}
                         />
-                        <div className="absolute inset-0 bg-black/40 mix-blend-multiply" />
+                        {/* Increased overlay opacity for better text contrast */}
+                        <div className="absolute inset-0 bg-black/50 mix-blend-multiply" />
                     </div>
                 ))}
             </div>
 
-            {/* Foreground Content Layer */}
             <div className="relative z-50 h-full w-full pointer-events-none">
                 {ROOMS.map((room, i) => (
                     <div
@@ -104,19 +85,19 @@ export default function ScrollScene() {
                         ref={(el) => { textsRef.current[i] = el; }}
                         className={`absolute inset-0 flex flex-col items-center justify-center p-6 ${i === 0 ? 'opacity-100' : 'opacity-0 translate-y-12'}`}
                     >
-                        <h2 className="text-5xl md:text-8xl font-playfair font-bold text-white mb-6 text-center drop-shadow-lg transform will-change-transform">
+                        {/* High-contrast White text with strong shadow */}
+                        <h2 className="text-5xl md:text-8xl font-playfair font-bold text-white mb-6 text-center drop-shadow-[0_4px_4px_rgba(0,0,0,0.8)] transform will-change-transform">
                             {room.title}
                         </h2>
-                        <p className="text-xl md:text-2xl font-lato text-stone-200 font-light text-center max-w-2xl drop-shadow-md">
+                        <p className="text-xl md:text-2xl font-lato text-stone-100 font-light text-center max-w-2xl drop-shadow-[0_2px_2px_rgba(0,0,0,0.8)]">
                             {room.description}
                         </p>
                     </div>
                 ))}
             </div>
 
-            {/* Optional: Scroll Indicator */}
-            <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-50 animate-bounce text-white/50">
-                <span className="text-xs uppercase tracking-widest">Scroll to Explore</span>
+            <div className="absolute bottom-8 left-1/2 -translate-x-1/2 z-50 animate-bounce text-white">
+                <span className="text-xs uppercase tracking-widest font-bold drop-shadow-md">Scroll to Explore</span>
             </div>
         </div>
     );
