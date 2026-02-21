@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Playfair_Display, Lato } from "next/font/google";
 import "./globals.css";
+import { CartProvider } from "@/context/CartContext"; // Import your new Context
 
 const playfair = Playfair_Display({
   subsets: ["latin"],
@@ -27,8 +28,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${playfair.variable} ${lato.variable} font-sans antialiased bg-stone-50 text-stone-900`}>
-        {children}
+      <body
+  suppressHydrationWarning
+  className={`${playfair.variable} ${lato.variable} font-sans antialiased bg-stone-50 text-stone-900`}
+>
+        {/* Wrap children with CartProvider to enable the Flipkart-style bag */}
+        <CartProvider>
+          {children}
+        </CartProvider>
       </body>
     </html>
   );
