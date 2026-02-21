@@ -1,19 +1,17 @@
 'use client';
 
-import { useRef } from 'react';
-import { ShoppingCart } from 'lucide-react';
-
+import { useRef, useState } from 'react';
+import { ShoppingCart, Menu, X as CloseIcon } from 'lucide-react';
 import ScrollScene from "@/components/ScrollScene";
 import About from "@/components/About";
 import Services from "@/components/Services";
 import Products from "@/components/Products";
 import BookNow from "@/components/BookNow";
 import CartView from "@/components/CartView";
-
 import { useCart } from "@/context/CartContext";
 
 export default function Home() {
-
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const aboutRef = useRef<HTMLDivElement>(null);
   const serviceRef = useRef<HTMLDivElement>(null);
   const productRef = useRef<HTMLDivElement>(null);
@@ -21,139 +19,92 @@ export default function Home() {
 
   const { setIsCartOpen, cart } = useCart();
 
-  const scrollTo = (ref: React.RefObject<HTMLDivElement>) => {
-    ref.current?.scrollIntoView({ behavior: 'smooth' });
+  /**
+   * FIXED: Added '| null' to the RefObject type to prevent the 
+   * TypeScript "Type 'null' is not assignable" error during build.
+   */
+  const scrollTo = (ref: React.RefObject<HTMLDivElement | null>) => {
+    if (ref.current) {
+      ref.current.scrollIntoView({ behavior: 'smooth' });
+      setIsMenuOpen(false); // Close mobile menu if open
+    }
   };
 
   return (
     <main className="relative bg-white overflow-x-hidden">
-
-      {/* ================= NAVBAR ================= */}
-      <nav
-        className="
-          fixed top-0 left-0 w-full z-50
-          px-4 sm:px-6 md:px-8
-          py-3 sm:py-5 md:py-8
-          flex justify-between items-center
-          mix-blend-difference text-white
-        "
-      >
-
-        {/* Logo */}
-        <div
-          className="
-            text-lg sm:text-xl md:text-3xl
-            font-playfair font-black
-            tracking-[0.15em]
-          "
-        >
+      {/* ================= NAVIGATION ================= */}
+      <nav className="fixed top-0 left-0 w-full z-50 px-6 py-6 md:px-10 md:py-8 flex justify-between items-center mix-blend-difference text-white">
+        
+        {/* Brand Logo */}
+        <div className="text-2xl md:text-3xl font-playfair font-black tracking-[0.15em]">
           SERENITY
         </div>
 
-        {/* Desktop Menu */}
-        <div className="hidden md:flex gap-6 lg:gap-12 items-center">
-
-          {/* Links */}
-          <div
-            className="
-              flex gap-6 lg:gap-10
-              text-xs md:text-sm lg:text-lg
-              uppercase tracking-[0.25em]
-              font-bold
-            "
-          >
-            <button
-              onClick={() => scrollTo(aboutRef)}
-              className="hover:text-stone-400 transition-colors"
-            >
-              About
-            </button>
-
-            <button
-              onClick={() => scrollTo(serviceRef)}
-              className="hover:text-stone-400 transition-colors"
-            >
-              Services
-            </button>
-
-            <button
-              onClick={() => scrollTo(productRef)}
-              className="hover:text-stone-400 transition-colors"
-            >
-              Curation
-            </button>
+        {/* Desktop Menu - Hidden on Mobile */}
+        <div className="hidden lg:flex gap-10 items-center">
+          <div className="flex gap-8 text-sm uppercase tracking-[0.2em] font-bold">
+            <button onClick={() => scrollTo(aboutRef)} className="hover:opacity-50 transition-opacity">About</button>
+            <button onClick={() => scrollTo(serviceRef)} className="hover:opacity-50 transition-opacity">Services</button>
+            <button onClick={() => scrollTo(productRef)} className="hover:opacity-50 transition-opacity">Curation</button>
           </div>
-
-          {/* Cart Button */}
-          <button
-            onClick={() => setIsCartOpen(true)}
-            className="flex items-center gap-2 group hover:opacity-80 transition-all"
-          >
+          
+          {/* Cart Button with Badge */}
+          <button onClick={() => setIsCartOpen(true)} className="relative flex items-center gap-3 group">
             <div className="relative">
-
-              <ShoppingCart
-                size={20}
-                className="md:w-6 md:h-6 group-hover:scale-110 transition-transform"
-              />
-
+              <ShoppingCart size={22} strokeWidth={2.5} />
               {cart.length > 0 && (
-                <span
-                  className="
-                    absolute -top-2 -right-2
-                    bg-red-600 text-white
-                    text-[9px] md:text-[10px]
-                    font-black
-                    h-4 w-4 md:h-5 md:w-5
-                    rounded-full
-                    flex items-center justify-center
-                    border-2 border-black
-                  "
-                >
+                <span className="absolute -top-2 -right-2 bg-red-600 text-white text-[10px] font-black h-4 w-4 rounded-full flex items-center justify-center border border-black animate-in zoom-in">
                   {cart.length}
                 </span>
               )}
-
             </div>
-
-            <span
-              className="
-                hidden lg:block
-                text-xs md:text-sm
-                uppercase tracking-[0.25em]
-                font-bold
-              "
-            >
-              Cart
-            </span>
+            <span className="text-sm font-bold uppercase tracking-[0.2em]">Cart</span>
           </button>
 
-          {/* Book Button */}
-          <button
-            onClick={() => scrollTo(bookingRef)}
-            className="
-              bg-white text-black
-              px-5 sm:px-7 md:px-10
-              py-2 sm:py-3
-              text-[10px] sm:text-xs md:text-sm
-              uppercase tracking-[0.3em]
-              font-black
-              hover:bg-stone-200
-              transition-all
-              active:scale-95
-              shadow-lg
-            "
+          {/* Book Now Button */}
+          <button 
+            onClick={() => scrollTo(bookingRef)} 
+            className="bg-white text-black px-8 py-3 text-sm font-black uppercase tracking-[0.2em] hover:bg-stone-200 transition-colors shadow-lg"
           >
             Book
           </button>
-
         </div>
 
+        {/* Mobile Controls - Visible on Mobile and Tablet */}
+        <div className="lg:hidden flex items-center gap-6">
+           <button onClick={() => setIsCartOpen(true)} className="relative">
+              <ShoppingCart size={26} />
+              {cart.length > 0 && (
+                <span className="absolute -top-2 -right-2 bg-red-600 text-white text-[10px] h-4 w-4 rounded-full flex items-center justify-center">
+                  {cart.length}
+                </span>
+              )}
+           </button>
+           <button onClick={() => setIsMenuOpen(!isMenuOpen)} className="z-[60]">
+             {isMenuOpen ? <CloseIcon size={30} /> : <Menu size={30} />}
+           </button>
+        </div>
       </nav>
 
-      {/* ================= CONTENT ================= */}
+      {/* ================= MOBILE MENU OVERLAY ================= */}
+      {isMenuOpen && (
+        <div className="fixed inset-0 z-[55] bg-stone-900 text-white flex flex-col items-center justify-center gap-10 text-3xl font-playfair uppercase tracking-widest animate-in slide-in-from-top duration-500">
+           <button onClick={() => scrollTo(aboutRef)}>About</button>
+           <button onClick={() => scrollTo(serviceRef)}>Services</button>
+           <button onClick={() => scrollTo(productRef)}>Curation</button>
+           <button 
+              onClick={() => scrollTo(bookingRef)} 
+              className="bg-white text-black px-12 py-5 text-xl font-black shadow-2xl"
+           >
+              Book Now
+           </button>
+        </div>
+      )}
 
+      {/* ================= PAGE SECTIONS ================= */}
+      
       <ScrollScene />
-
+      
       <div ref={aboutRef}>
         <About />
       </div>
@@ -170,7 +121,8 @@ export default function Home() {
         <BookNow />
       </div>
 
-      {/* ================= CART ================= */}
+      {/* ================= GLOBAL OVERLAYS ================= */}
+      
       <CartView />
 
     </main>
